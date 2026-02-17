@@ -1,9 +1,14 @@
 export async function fetchCareers() {
-  const res = await fetch("https://career-compass-backend.onrender.com/api/careers");
+  try {
+    const response = await fetch(
+      "https://career-compass-backend.onrender.com/api/careers"
+    );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch careers");
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching careers:", error);
+    return [];
   }
-
-  return res.json();
 }
