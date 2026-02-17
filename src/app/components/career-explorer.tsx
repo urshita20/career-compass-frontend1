@@ -6,7 +6,10 @@ import { Input } from "@/app/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/components/ui/dialog";
 import { ArrowLeft, Search, TrendingUp, Briefcase, BookOpen, MapPin, CheckCircle2, XCircle } from "lucide-react";
-import { CareerPath, careerPaths, learningResources } from "./career-data";
+import { CareerPath, learningResources } from "./career-data";
+import { useEffect } from "react";
+import { fetchCareers } from "@/api/careers";
+
 
 interface CareerExplorerProps {
   onBack: () => void;
@@ -17,10 +20,18 @@ export function CareerExplorer({ onBack }: CareerExplorerProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [demandFilter, setDemandFilter] = useState<string>("all");
   const [selectedCareer, setSelectedCareer] = useState<CareerPath | null>(null);
+  const [careers, setCareers] = useState<CareerPath[]>([]);
+useEffect(() => {
+  fetchCareers().then((data) => {
+    setCareers(data);
+  });
+}, []);
 
-  const categories = Array.from(new Set(careerPaths.map((c) => c.category)));
+const categories = Array.from(new Set(careers.map((c) => c.category)));
 
-  const filteredCareers = careerPaths.filter((career) => {
+
+  const filteredCareers = careers.filter((career) => {
+
     const matchesSearch = career.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          career.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === "all" || career.category === categoryFilter;
